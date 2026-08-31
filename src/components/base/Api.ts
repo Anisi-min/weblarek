@@ -20,12 +20,14 @@ export class Api {
             .then(data => Promise.reject(data.error ?? response.statusText));
     }
 
-    get<T extends object>(uri: string) {
-        return fetch(this.baseUrl + uri, {
-            ...this.options,
-            method: 'GET'
-        }).then(this.handleResponse<T>);
-    }
+   get<T extends object>(uri: string) {
+  console.log('🌐 Полный URL:', this.baseUrl + uri); // 👈 ДОБАВЬТЕ ЭТО
+
+  return fetch(this.baseUrl + uri, {
+    ...this.options,
+    method: 'GET'
+  }).then(this.handleResponse<T>);
+}
 
     post<T extends object>(uri: string, data: object, method: ApiPostMethods = 'POST') {
         return fetch(this.baseUrl + uri, {

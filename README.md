@@ -45,13 +45,104 @@ yarn build
 
 ## Архитектура приложения
 
-Код приложения разделен на слои согласно парадигме MVP (Model-View-Presenter), которая обеспечивает четкое разделение ответственности между классами слоев Model и View. Каждый слой несет свой смысл и ответственность:
+Данные
+В приложении используются две сущности: Товар и Покупатель.
 
-Model - слой данных, отвечает за хранение и изменение данных.  
-View - слой представления, отвечает за отображение данных на странице.  
-Presenter - презентер содержит основную логику приложения и  отвечает за связь представления и данных.
+typescript
+// Товар
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+}
 
-Взаимодействие между классами обеспечивается использованием событийно-ориентированного подхода. Модели и Представления генерируют события при изменении данных или взаимодействии пользователя с приложением, а Презентер обрабатывает эти события используя методы как Моделей, так и Представлений.
+// Покупатель
+type TPayment = 'card' | 'cash';
+interface IBuyer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+Модели данных
+Три класса для управления данными:
+
+1. ProductModel — каталог товаров
+Хранит список товаров и выбранный для просмотра товар.
+
+typescript
+class ProductModel {
+  private _items: IProduct[];
+  private _previewId: string | null;
+
+  setItems(items: IProduct[]): void;
+  getItems(): IProduct[];
+  getItem(id: string): IProduct | undefined;
+  setPreview(id: string): void;
+  getPreview(): IProduct | undefined;
+}
+2. CartModel — корзина
+Хранит товары, выбранные для покупки.
+
+typescript
+class CartModel {
+  private _items: IProduct[];
+
+  constructor(events: EventEmitter);
+
+  getItems(): IProduct[];
+  addItem(product: IProduct): void;
+  removeItem(id: string): void;
+  clear(): void;
+  getTotal(): number;
+  getCount(): number;
+  hasItem(id: string): boolean;
+}
+3. OrderModel — покупатель
+Хранит данные покупателя (способ оплаты, адрес, email, телефон).
+
+typescript
+class OrderModel {
+  private _payment: TPayment | null;
+  private _address: string;
+  private _email: string;
+  private _phone: string;
+
+  constructor(events: EventEmitter);
+
+  setPayment(method: TPayment): void;
+  setAddress(address: string): void;
+  setEmail(email: string): void;
+  setPhone(phone: string): void;
+  getOrderData(): IBuyer & { items: string[]; total: number };
+  clear(): void;
+  validate(): Partial<Record<keyof IBuyer, string>>;
+}
+
+## Слой коммуникации
+
+Класс LarekApi-работа с API сервера
+
+Назначение: Взаимодействие с сервером "Веб-ларёк"-получение товаров и отправка заказов.
+
+```typescript
+interface ILarekApi {
+  getProducts(): Promise<Product[]>;
+  getProduct(id: ProductId): Promise<Product>;
+  postOrder(order: Order): Promise<SentOrder>;
+}
+
+class LarekApi implements ILarekApi {
+  constructor(private api: IApi) {}
+
+  getProducts(): Promise<Product[]> { ... }
+  getProduct(id: ProductId): Promise<Product> { ... }
+  postOrder(order: Order): Promise<SentOrder> { ... }
+}
 
 ### Базовый код
 
