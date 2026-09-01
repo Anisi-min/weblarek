@@ -44,12 +44,13 @@ yarn build
 «Web-Larёk» — это интернет-магазин с товарами для веб-разработчиков, где пользователи могут просматривать товары, добавлять их в корзину и оформлять заказы. Сайт предоставляет удобный интерфейс с модальными окнами для просмотра деталей товаров, управления корзиной и выбора способа оплаты, обеспечивая полный цикл покупки с отправкой заказов на сервер.
 
 ## Архитектура приложения
+ Приложение построено на основе паттерна MVP (Model-View-Presenter), который обеспечивает четкое разделение ответственности между слоями данных, представления и логики. Взаимодействие между компонентами организовано через событийно-ориентированный подход с использованием брокера событий EventEmitter.
+### Данные
 
-Данные
 В приложении используются две сущности: Товар и Покупатель.
+#### Товар
 
-typescript
-// Товар
+```typescript
 interface IProduct {
   id: string;
   description: string;
@@ -58,8 +59,11 @@ interface IProduct {
   category: string;
   price: number | null;
 }
+```
 
-// Покупатель
+ #### Покупатель
+
+ ```typescript
 type TPayment = 'card' | 'cash';
 interface IBuyer {
   payment: TPayment;
@@ -67,14 +71,15 @@ interface IBuyer {
   phone: string;
   address: string;
 }
+```
 
-Модели данных
+### Модули
 Три класса для управления данными:
 
 1. ProductModel — каталог товаров
 Хранит список товаров и выбранный для просмотра товар.
 
-typescript
+```typescript
 class ProductModel {
   private _items: IProduct[];
   private _previewId: string | null;
@@ -88,7 +93,7 @@ class ProductModel {
 2. CartModel — корзина
 Хранит товары, выбранные для покупки.
 
-typescript
+
 class CartModel {
   private _items: IProduct[];
 
@@ -122,10 +127,11 @@ class OrderModel {
   clear(): void;
   validate(): Partial<Record<keyof IBuyer, string>>;
 }
+```
 
 ## Слой коммуникации
 
-Класс LarekApi-работа с API сервера
+### Класс LarekApi-работа с API сервера
 
 Назначение: Взаимодействие с сервером "Веб-ларёк"-получение товаров и отправка заказов.
 
@@ -143,6 +149,7 @@ class LarekApi implements ILarekApi {
   getProduct(id: ProductId): Promise<Product> { ... }
   postOrder(order: Order): Promise<SentOrder> { ... }
 }
+```
 
 ### Базовый код
 
