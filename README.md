@@ -76,7 +76,7 @@ interface IBuyer {
 ### Модули
 Три класса для управления данными:
 
-1. ProductModel — каталог товаров
+#### 1. ProductModel — каталог товаров
 Хранит список товаров и выбранный для просмотра товар.
 
 ```typescript
@@ -90,10 +90,11 @@ class ProductModel {
   setPreview(id: string): void;
   getPreview(): IProduct | undefined;
 }
-2. CartModel — корзина
+```
+#### 2. CartModel — корзина
 Хранит товары, выбранные для покупки.
 
-
+```typescript
 class CartModel {
   private _items: IProduct[];
 
@@ -107,10 +108,11 @@ class CartModel {
   getCount(): number;
   hasItem(id: string): boolean;
 }
-3. OrderModel — покупатель
+```
+#### 3. OrderModel — покупатель
 Хранит данные покупателя (способ оплаты, адрес, email, телефон).
 
-typescript
+```typescript
 class OrderModel {
   private _payment: TPayment | null;
   private _address: string;
