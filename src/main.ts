@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Загружаем товары с сервера
   loadProducts()
     .then(() => {
-      // После загрузки проверяем модели
       testModels();
     })
     .catch((error) => {
